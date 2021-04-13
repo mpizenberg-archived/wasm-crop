@@ -1,6 +1,7 @@
-import { greet, default as init } from "./pkg/wasm_crop.js";
+import { Cropper, greet, default as init } from "./pkg/wasm_crop.js";
 
 const file_input = document.getElementById("file-input");
+const img_dom = document.getElementById("the-img");
 const file_reader = new FileReader();
 file_input.onchange = () => loadInput();
 start();
@@ -13,35 +14,17 @@ function loadInput() {
 async function start() {
   // Initialize the wasm module.
   const wasm = await init("./pkg/wasm_crop_bg.wasm");
+  const cropper = Cropper.new();
   greet("Matthieu");
-  // const wasm_tracker = WasmTracker.new();
 
-  // // Transfer archive data to wasm when the file is loaded.
-  // file_reader.onload = () =>
-  //   transferContent(file_reader.result, wasm_tracker, wasm);
+  // Crop image when it is loaded.
+  file_reader.onload = () => {
+    let buffer = new Uint8Array(file_reader.result);
+    console.log("before cropped: ", buffer);
+    let cropped = cropper.crop(buffer);
+    console.log("after cropped: ", cropped);
+    let cropped_blob = new Blob(cropped);
+    let url = URL.createObjectURL(cropped_blob);
+    img_dom.src = url;
+  };
 }
-
-// // Transfer archive data to wasm when the file is loaded.
-// function transferContent(arrayBuffer, wasm_tracker, wasm) {
-//   wasm_tracker.allocate(arrayBuffer.byteLength);
-//   const wasm_buffer = new Uint8Array(wasm.memory.buffer);
-//   const start = wasm_tracker.memory_pos();
-//   const file_buffer = new Uint8Array(arrayBuffer);
-//   wasm_buffer.set(file_buffer, start);
-//   console.log("Building entries hash map ...");
-//   wasm_tracker.build_entries_map();
-//   console.log("Initializing tracker with first image ...");
-//   const nb_frames = wasm_tracker.init("fr3");
-//   console.log("Starting animation frame loop ...");
-//   window.requestAnimationFrame(() => track(wasm_tracker, 1, nb_frames));
-// }
-//
-// function track(wasm_tracker, frame_id, nb_frames) {
-//   if (frame_id < nb_frames) {
-//     const frame_pose = wasm_tracker.track(frame_id);
-//     console.log(frame_pose);
-//     window.requestAnimationFrame(() =>
-//       track(wasm_tracker, frame_id + 1, nb_frames)
-//     );
-//   }
-// }
