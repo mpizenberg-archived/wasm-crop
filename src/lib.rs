@@ -19,6 +19,7 @@ extern "C" {
 }
 
 #[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, template!");
+pub fn greet(who: &str) {
+    set_panic_hook();
+    alert(&format!("Hello, {}!", who));
 }
