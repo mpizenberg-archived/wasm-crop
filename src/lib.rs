@@ -22,4 +22,5 @@ extern "C" {
 pub fn greet(who: &str) {
     set_panic_hook();
     alert(&format!("Hello, {}!", who));
+    panic!("Woops");
 }
