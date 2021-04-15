@@ -28,6 +28,12 @@ async function start() {
     // Display the cropped image.
     let cropped_url = URL.createObjectURL(new Blob([cropped]));
     img_dom.src = cropped_url;
+
+    // TEMP
+    let img_temp = new Image();
+    img_temp.src = cropped_url;
+    await img_temp.decode();
+
     URL.revokeObjectURL(original_url);
   };
 }
